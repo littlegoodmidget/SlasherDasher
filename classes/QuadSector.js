@@ -81,6 +81,7 @@ class Point {
     constructor(x, y) {
         this.x = x;
         this.y = y;
+        this.type = 'point';
     }
     draw() {
         c.beginPath();
@@ -95,5 +96,6 @@ class Square {
         this.y = y;
         this.width = width;
         this.height = height;
+        this.type = 'square';
     }
 }
