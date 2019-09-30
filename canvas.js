@@ -1,0 +1,1 @@
+const canvas = "I'm a string for canvas!";
