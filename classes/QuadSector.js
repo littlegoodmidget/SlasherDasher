@@ -49,9 +49,22 @@ class QuadSector {
     }
     insert(obj) {
         if((!this.subDivided&&this.objects.length+1 < QuadSector.MaxObjects)||this.depth==QuadSector.MaxDepth) {
+            //If Not Sub-Divided
+            //If Length Will Be Small Enough
+
+            //Or
+
+            //If Depth Is Equal To Max Depth
             this.objects.push(obj);
         }   else {
+            //If Alrady Subdivided
+            //Or
+            //If Length Is Too Big
+            //Or
+            //Depth Is Not Equal To Max Depth
             if(this.depth<QuadSector.MaxDepth&&!this.subDivided) {
+                //If Small Enough
+                //If Not Divided
                 this.subDivided = true;
                 this.TL = new QuadSector(new Rect(this.dimensions.x, this.dimensions.y, this.dimensions.width/2, this.dimensions.height/2), this.depth+1);
                 this.TR = new QuadSector(new Rect(this.dimensions.x + this.dimensions.width/2, this.dimensions.y, this.dimensions.width/2, this.dimensions.height/2), this.depth+1);
@@ -63,8 +76,10 @@ class QuadSector {
                 }
                 this.objects.length = 0;
             }   else if(this.depth<QuadSector.MaxDepth) {
+                //If Small Enough
                 this.insertToChild(obj);
             }
+
         }
     }
     draw() {

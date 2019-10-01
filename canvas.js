@@ -6,7 +6,7 @@ canvas.height = innerHeight;
 const c = canvas.getContext('2d');
 let quadSettings = {
     MaxDepth: 6,
-    MaxObjects: 4
+    MaxObjects: 2
 }
 
 setQuadSettings(quadSettings);
