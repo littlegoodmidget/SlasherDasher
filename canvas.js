@@ -6,11 +6,11 @@ canvas.height = innerHeight;
 const c = canvas.getContext('2d');
 let quadSettings = {
     MaxDepth: 6,
-    MaxObjects: 4
+    MaxObjects: 3
 }
 
 setQuadSettings(quadSettings);
-const quadTree = new QuadSector(new Rect(0, 0, canvas.width, canvas.height));
+let quadTree = new QuadSector(new Rect(0, 0, canvas.width, canvas.height),0);
 
 
 
@@ -19,7 +19,14 @@ const quadTree = new QuadSector(new Rect(0, 0, canvas.width, canvas.height));
 
 
 
+// for(let i = 0; i < 100; i++) {
+//     quadRoots.length = 0;
 
+//     let block = new Block(Math.random()*canvas.width, Math.random()*canvas.height, 5, 5);
+//     quadTree.getRoots(quadTree, quadRoots);
+//     quadTree.insert(block);
+//     block.draw();
+// }
 
 
 
@@ -30,7 +37,8 @@ function setQuadSettings(settings) {
 canvas.addEventListener('mousedown', function(e) {
     quadRoots.length = 0;
 
-    let block = new Block(e.offsetX, e.offsetY, 32, 32);
+    let block = new Block(e.offsetX, e.offsetY, 100, 100);
+    squares.push(block);
     quadTree.getRoots(quadTree, quadRoots);
     quadTree.insert(block);
     block.draw();
