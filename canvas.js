@@ -5,14 +5,14 @@ canvas.width = innerWidth;
 canvas.height = innerHeight;
 const c = canvas.getContext('2d');
 let quadSettings = {
-    MaxDepth: 6,
-    MaxObjects: 3
+    MaxDepth: 8,
+    MaxObjects: 10
 }
 
 setQuadSettings(quadSettings);
 let quadTree = new QuadSector(new Rect(0, 0, canvas.width, canvas.height),0);
 
-
+loop();
 
 
 
@@ -34,10 +34,10 @@ function setQuadSettings(settings) {
     QuadSector.MaxDepth = settings.MaxDepth;
     QuadSector.MaxObjects = settings.MaxObjects;
 }
-canvas.addEventListener('mousedown', function(e) {
+canvas.addEventListener('mousemove', function(e) {
     quadRoots.length = 0;
 
-    let block = new Block(e.offsetX, e.offsetY, 100, 100);
+    let block = new Block(e.offsetX, e.offsetY, 10, 10);
     squares.push(block);
     quadTree.getRoots(quadTree, quadRoots);
     quadTree.insert(block);

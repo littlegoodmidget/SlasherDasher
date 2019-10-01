@@ -179,17 +179,30 @@ let squares = [];
 
 function loop() {
     quadTree = new QuadSector(new Rect(0, 0, canvas.width, canvas.height),0);
-    
+    quadRoots.length = 0;
+    quadTree.getRoots(quadTree, quadRoots);
+    // if(squares.length<=1) {
+    //     // quadTree = new QuadSector(new Rect(0, 0, canvas.width, canvas.height),0);
+    //     // c.clearRect(0, 0, canvas.width, canvas.height)
+    // }
     c.clearRect(0, 0, canvas.width, canvas.height);
     for(let i = 0; i < squares.length; i++) {
         squares[i].move();
-        squares[i].draw();
         quadTree.insert(squares[i]);
+        squares[i].draw();
         if(squares[i].isDead) {
             squares.splice(i, 1);
         }
     }
+    for(let i = 0; i < quadRoots.length; i++) {
+        if(quadRoots[i].objects.length>1) {
+            for(let j = 0; j < quadRoots[i].objects.length; j++) {
+                quadRoots[i].objects[j].draw();
+            }
+        }
+    }
     // let s = 0;
+    
     for(let i = 0; i < quadRoots.length; i++) {
         quadRoots[i].draw();
         // debugger
@@ -203,10 +216,18 @@ function loop() {
                     if(j!=k) {
                         if(obj.x+obj.dx+obj.width/2 > obj2.x+obj2.dx - obj2.width/2 && obj.x-obj.width/2+obj.dx < obj2.x + obj2.width/2+obj2.dx && obj.y+obj.height/2+obj.dy > obj2.y+obj2.dy - obj2.height/2 &&obj.dy+ obj.y-obj.height/2 <obj2.dy+ obj2.y + obj2.height/2) {
                             // console.log('12')
+                            // console.log(obj.dx**2+obj.dy**2>obj2.dx**2+obj2.dy**2)
                             if(obj.dx**2+obj.dy**2>obj2.dx**2+obj2.dy**2) {
                                 obj2.isDead = true;
+                                obj.dx*=0.5;
+                                obj.dy*=0.5;
+                                k=419024812940189048;
+                                j=2194102490412804181241;
                             }   else {
-                                obj.isDead = false;
+                                obj.isDead = true;
+                                k=419024812940189048;
+                                obj2.dx*=0.95;
+                                obj2.dy*=0.95;
                             }
                             c.fillStyle='red';
                             obj.draw();
@@ -232,9 +253,9 @@ function loop() {
     // console.log(s)
 
 
-    setTimeout(loop, 1000/60);
+    setTimeout(loop, 1000/t);
 }
-
+let t = 60;
 
 
 
