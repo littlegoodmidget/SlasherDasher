@@ -1,12 +1,12 @@
 const canvas = document.getElementById('canvas');
-canvas.width = 600;
-canvas.height = 600;
+canvas.width = 200;
+canvas.height = 200;
 canvas.width = innerWidth;
 canvas.height = innerHeight;
 const c = canvas.getContext('2d');
 let quadSettings = {
-    MaxDepth: 8,
-    MaxObjects: 10
+    MaxDepth: 4,
+    MaxObjects: 1000/20
 }
 
 setQuadSettings(quadSettings);
@@ -34,13 +34,13 @@ function setQuadSettings(settings) {
     QuadSector.MaxDepth = settings.MaxDepth;
     QuadSector.MaxObjects = settings.MaxObjects;
 }
-canvas.addEventListener('mousemove', function(e) {
-    quadRoots.length = 0;
+// canvas.addEventListener('mousemove', function(e) {
+//     quadRoots.length = 0;
 
-    let block = new Block(e.offsetX, e.offsetY, 10, 10);
-    squares.push(block);
-    quadTree.getRoots(quadTree, quadRoots);
-    quadTree.insert(block);
-    block.draw();
+//     let block = new Block(e.offsetX, e.offsetY, 10, 10);
+//     squares.push(block);
+//     quadTree.getRoots(quadTree, quadRoots);
+//     quadTree.insert(block);
+//     block.draw();
 
-})
+// })

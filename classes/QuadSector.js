@@ -194,13 +194,16 @@ function loop() {
             squares.splice(i, 1);
         }
     }
-    for(let i = 0; i < quadRoots.length; i++) {
-        if(quadRoots[i].objects.length>1) {
-            for(let j = 0; j < quadRoots[i].objects.length; j++) {
-                quadRoots[i].objects[j].draw();
-            }
-        }
+    while(squares.length<1000) {
+        squares.push(new Block(Math.random()*canvas.width, Math.random()*canvas.height, 5, 5))
     }
+    // for(let i = 0; i < quadRoots.length; i++) {
+    //     if(quadRoots[i].objects.length>1) {
+    //         for(let j = 0; j < quadRoots[i].objects.length; j++) {
+    //             quadRoots[i].objects[j].draw();
+    //         }
+    //     }
+    // }
     // let s = 0;
     
     for(let i = 0; i < quadRoots.length; i++) {
