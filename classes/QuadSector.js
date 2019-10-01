@@ -1,4 +1,4 @@
-class Rect {
+class Rect { //hello world
     constructor(x, y, w, h) {
         this.x = x;
         this.y = y;
