@@ -81,20 +81,10 @@ class QuadSector {
                 let quad = quadRoots[i]
                 let dim = quad.dimensions;
                 if(obj.x + obj.width/2 > dim.x && obj.x - obj.width/2 < dim.x + dim.width && obj.y + obj.height/2 > dim.y && obj.y - obj.height/2 < dim.y + dim.height) {
-                    // console.log('overlap with quad')
-                    // c.fillStyle = 'rgba(0.5, 0.5, 0.5, 0.2)';
                     quad.insert(obj);
-                    
-                    // c.fillRect(dim.x, dim.y, dim.width, dim.height);
-                    // c.fillStyle = 'black'
                 }
 
             }
-
-            // c.fillStyle = 'purple';
-            // obj.draw();
-            // c.fillStyle = 'black';
-            // debugger;
 
         }
     }
@@ -110,7 +100,7 @@ class QuadSector {
     }
     insert(obj) {
         for(let i = 0; i < this.objects.length; i++) {
-            if(obj === this.objects[i]) {
+            if(obj.id === this.objects[i].id) {
                 // console.log('same')
                 return;
             }
@@ -122,6 +112,7 @@ class QuadSector {
             //Or
 
             //If Depth Is Equal To Max Depth
+
             this.objects.push(obj);
         }   else {
             //If Alrady Subdivided
@@ -144,9 +135,9 @@ class QuadSector {
                     this.insertToChild(this.objects[i]);
                     // quadRoots.length = 0;
                     // this.getRoots(quadTree, quadRoots);
-                    quadRoots.length = 0;
-                    this.getRoots(quadTree, quadRoots);
                 }
+                quadRoots.length = 0;
+                this.getRoots(quadTree, quadRoots);
                 // debugger
                 this.objects.length = 0;
             }   else if(this.depth<QuadSector.MaxDepth) {
@@ -158,12 +149,12 @@ class QuadSector {
                 //     // this.getRoots(quadTree, quadRoots);
                 // }
                 
-                this.objects.length = 0;
+                // this.objects.length = 0;
                 
                 // debugger
                 this.insertToChild(obj);
-                quadRoots.length = 0;
-                this.getRoots(quadTree, quadRoots);
+                // quadRoots.length = 0;
+                // this.getRoots(quadTree, quadRoots);
             }
 
         }
@@ -171,94 +162,179 @@ class QuadSector {
     draw() {
         c.strokeRect(this.dimensions.x, this.dimensions.y, this.dimensions.width, this.dimensions.height);
     }
+    checkObjectsStillInRange() {
+        let changedObjects = [];
+        let obj;
+        for(let i = 0; i < this.objects.length; i++) {
+            obj = this.objects[i];
+            let pos = [
+                ~~(((obj.x-obj.width/2) - this.dimensions.x) / this.dimensions.width * 2),
+                ~~(((obj.y-obj.height/2) - this.dimensions.y) / this.dimensions.height * 2),
+                ~~(((obj.x+obj.width/2) - this.dimensions.x) / this.dimensions.width * 2),
+                ~~(((obj.y+obj.height/2) - this.dimensions.y) / this.dimensions.height * 2),
+                // ~~percentY
+            ];
+            if(pos[0]<0||pos[1]<0||pos[2]<0||pos[3]<0||pos[0]>1||pos[1]>1||pos[2]>1||pos[3]>1) {
+                changedObjects.push(obj);
+                // console.log(changedObjects)
+                this.objects.splice(i, 1);
+                //go up tree to find if children have enough objects then insert objects at top
+                //or could check if still have enough before removal
+                // quadTree.insert(obj);
+                
+            }
+        }
+
+        if(this.depth!=0) {//deleting node if not needed??
+            let sumOfChildrenObjects = changedObjects.length;
+            let rRoots = [];
+            let childrenObjects = [];
+            quadTree.getRoots(this.parent, rRoots);
+            for(let i = 0; i < rRoots.length; i++) {
+                sumOfChildrenObjects += rRoots[i].objects.length;
+                childrenObjects.push(...rRoots[i].objects);
+            }
+            // console.log(rRoots);
+            // debugger
+            // console.log(sumOfChildrenObjects)
+            if(sumOfChildrenObjects < QuadSector.MaxObjects) {
+            // if(this.parent.TL.objects.length+this.parent.TR.objects.length+this.parent.BL.objects.length+this.parent.BR.objects.length < QuadSector.MaxObjects) {
+                this.parent.TL = undefined;
+                this.parent.TR = undefined;
+                this.parent.BL = undefined;
+                this.parent.BR = undefined;
+                this.parent.subDivided = false;
+                quadRoots.length = 0;
+                this.getRoots(quadTree, quadRoots);
+                // console.log('1')
+
+            }
+            // console.log(changedObjects)
+            for(let i = 0; i < changedObjects.length; i++) {
+                this.parent.insert(changedObjects[i]);
+                
+            }
+            for(let i = 0; i < childrenObjects.length; i++) {
+                this.parent.insert(childrenObjects[i]);
+                
+            }
+        }
+        
+        // console.log(changedObjects)
+    }
+    // checkObjectsStillInRange() {
+    //     let obj;
+    //     for(let i = 0; i < this.objects.length; i++) {
+    //         obj = this.objects[i];
+    //         let pos = [
+    //             ~~(((obj.x-obj.width/2) - this.dimensions.x) / this.dimensions.width * 2),
+    //             ~~(((obj.y-obj.height/2) - this.dimensions.y) / this.dimensions.height * 2),
+    //             ~~(((obj.x+obj.width/2) - this.dimensions.x) / this.dimensions.width * 2),
+    //             ~~(((obj.y+obj.height/2) - this.dimensions.y) / this.dimensions.height * 2),
+    //             // ~~percentY
+    //         ];
+    //         if(pos[0]<0||pos[1]<0||pos[2]<0||pos[3]<0||pos[0]>1||pos[1]>1||pos[2]>1||pos[3]>1) {
+    //             let currentQuad = this;
+    //             while(currentQuad.depth!=0||pos[0]<0||pos[1]<0||pos[2]<0||pos[3]<0||pos[0]>1||pos[1]>1||pos[2]>1||pos[3]>1) {
+    //                 currentQuad = currentQuad.parent;
+    //                 pos = [
+    //                     ~~(((obj.x-obj.width/2) - currentQuad.dimensions.x) / currentQuad.dimensions.width * 2),
+    //                     ~~(((obj.y-obj.height/2) - currentQuad.dimensions.y) / currentQuad.dimensions.height * 2),
+    //                     ~~(((obj.x+obj.width/2) - currentQuad.dimensions.x) / currentQuad.dimensions.width * 2),
+    //                     ~~(((obj.y+obj.height/2) - currentQuad.dimensions.y) / currentQuad.dimensions.height * 2),
+    //                 ];
+    //             }
+
+    //             // let roots = [];
+    //             // let objects = [];
+    //             // currentQuad.getRoots(currentQuad, roots);//rebuilds to top maybe find optimal spot where i don't have to rebuild as much
+    //             // currentQuad.TL = undefined;
+    //             // currentQuad.TR = undefined;
+    //             // currentQuad.BL = undefined;
+    //             // currentQuad.BR = undefined;
+    //             // currentQuad.subDivided = false;
+    //             // for(let i = 0; i < roots.length; i++) {
+    //             //     objects.push(...roots[i].objects)
+    //             // }
+    //             // for(let i = 0; i < objects.length; i++) {
+    //             //     currentQuad.insert(objects[i]);
+                    
+    //             // }
+    //             let currentParent = this.parent;
+    //             let sum = 0;
+    //             while(currentParent.depth!=0&&sum<QuadSector.MaxObjects&&currentParent.TL.objects.length+currentParent.TR.objects.length+currentParent.BL.objects.length+currentParent.BR.objects.length < QuadSector.MaxObjects) {
+    //                 sum = 0;
+    //                 let objects = [];
+    //                 let roots = [];
+    //                 this.getRoots(currentParent, roots);
+    //                 for(let i = 0; i < roots.length; i++) {
+    //                     sum+=roots[i].objects.length;
+    //                     console.log(sum)
+    //                     if(sum > QuadSector.MaxObjects) {
+    //                         objects.push(...roots[i].objects);
+    //                         currentParent.TL = undefined;
+    //                         currentParent.TR = undefined;
+    //                         currentParent.BL = undefined;
+    //                         currentParent.BR = undefined;
+    //                         currentParent.subDivided = false;
+    //                         for(let i = 0; i < objects.length; i++) {
+    //                             currentParent.insert(objects[i]);
+    //                         }
+    //                         return;
+    //                     }
+    //                 }
+    //                 currentParent = currentParent.parent;
+    //             }
+    //             // if(this.parent.TL.objects.length+this.parent.TR.objects.length+this.parent.BL.objects.length+this.parent.BR.objects.length < QuadSector.MaxObjects) {
+    //             //     // if(this.parent.TL.objects.length+this.parent.TR.objects.length+this.parent.BL.objects.length+this.parent.BR.objects.length < QuadSector.MaxObjects) {
+
+    //             //     //         // this.objects.length = 0;
+    //             //     //     //     debugger
+    //             //     //         // let insertedObjects = [...this.parent.TL.objects, ...this.parent.TR.objects, ...this.parent.BL.objects, ...this.parent.BR.objects]
+    //             //     //         // // this.parent.objects = 
+    //             //     //         // this.parent.TL = undefined;
+    //             //     //         // this.parent.TR = undefined;
+    //             //     //         // this.parent.BL = undefined;
+    //             //     //         // this.parent.BR = undefined;
+    //             //     //         // this.parent.subDivided = false;
+    //             //     // }
+    //             // }
+    //             currentQuad.insert(obj)
+    //             // for(let j = 0; j < this.objects.length; j++) {
+    //                 // if(obj==this.objects[j]) {
+    //                     // if()
+    //                     // console.log(pos)
+    //                     // if(this.parent.TL.objects.length+this.parent.TR.objects.length+this.parent.BL.objects.length+this.parent.BR.objects.length < QuadSector.MaxObjects) {
+    //                     //     this.objects.length = 0;
+    //                     //     debugger
+    //                     //     let insertedObjects = [...this.parent.TL.objects, ...this.parent.TR.objects, ...this.parent.BL.objects, ...this.parent.BR.objects]
+    //                     //     // this.parent.objects = 
+    //                     //     this.parent.TL = undefined;
+    //                     //     this.parent.TR = undefined;
+    //                     //     this.parent.BL = undefined;
+    //                     //     this.parent.BR = undefined;
+    //                     //     this.parent.subDivided = false;
+    //                     //     console.log(insertedObjects)
+    //                     //     for(let i = 0; i < insertedObjects.length; i++) {
+    //                     //         quadTree.insert(insertedObjects[i])
+    //                     //     }
+    //                     //     quadRoots.length = 0;
+    //                     //     this.getRoots(quadTree, quadRoots);
+    //                     //     return;
+    //                     // }
+    //                     // this.objects.splice(i,1)
+    //                     // quadTree.insert(obj)
+    //                     // console.log(pos);
+    //                 // }
+    //             // }
+    //         }
+        // }
+    // }
 }
 
 
 //TESTING
-let squares = [];
 
-function loop() {
-    quadTree = new QuadSector(new Rect(0, 0, canvas.width, canvas.height),0);
-    quadRoots.length = 0;
-    quadTree.getRoots(quadTree, quadRoots);
-    // if(squares.length<=1) {
-    //     // quadTree = new QuadSector(new Rect(0, 0, canvas.width, canvas.height),0);
-    //     // c.clearRect(0, 0, canvas.width, canvas.height)
-    // }
-    c.clearRect(0, 0, canvas.width, canvas.height);
-    for(let i = 0; i < squares.length; i++) {
-        squares[i].move();
-        quadTree.insert(squares[i]);
-        squares[i].draw();
-        if(squares[i].isDead) {
-            squares.splice(i, 1);
-        }
-    }
-    while(squares.length<1000) {
-        squares.push(new Block(Math.random()*canvas.width, Math.random()*canvas.height, 5, 5))
-    }
-    // for(let i = 0; i < quadRoots.length; i++) {
-    //     if(quadRoots[i].objects.length>1) {
-    //         for(let j = 0; j < quadRoots[i].objects.length; j++) {
-    //             quadRoots[i].objects[j].draw();
-    //         }
-    //     }
-    // }
-    // let s = 0;
-    
-    for(let i = 0; i < quadRoots.length; i++) {
-        quadRoots[i].draw();
-        // debugger
-        if(quadRoots[i].objects.length>1) {
-            // s++;
-            // console.log(quadRoots[i].objects)
-            for(let j = 0; j < quadRoots[i].objects.length; j++) {
-                let obj = quadRoots[i].objects[j];
-                for(let k = 0; k < quadRoots[i].objects.length; k++) {
-                    let obj2 = quadRoots[i].objects[k];
-                    if(j!=k) {
-                        if(obj.x+obj.dx+obj.width/2 > obj2.x+obj2.dx - obj2.width/2 && obj.x-obj.width/2+obj.dx < obj2.x + obj2.width/2+obj2.dx && obj.y+obj.height/2+obj.dy > obj2.y+obj2.dy - obj2.height/2 &&obj.dy+ obj.y-obj.height/2 <obj2.dy+ obj2.y + obj2.height/2) {
-                            // console.log('12')
-                            // console.log(obj.dx**2+obj.dy**2>obj2.dx**2+obj2.dy**2)
-                            if(obj.dx**2+obj.dy**2>obj2.dx**2+obj2.dy**2) {
-                                obj2.isDead = true;
-                                obj.dx*=0.5;
-                                obj.dy*=0.5;
-                                k=419024812940189048;
-                                j=2194102490412804181241;
-                            }   else {
-                                obj.isDead = true;
-                                k=419024812940189048;
-                                obj2.dx*=0.95;
-                                obj2.dy*=0.95;
-                            }
-                            c.fillStyle='red';
-                            obj.draw();
-                            
-                            obj.dy*=-1;
-                            obj2.dy*=-1;
-                            obj.dx*=-1;
-                            obj.dy*=-1;
-                            // obj.move();
-                            // obj2.move();
-                            // obj.dx*=-1;
-                            // obj2.dx*=-1;
-                            // obj.dy*=-1;
-                            // obj2.dy*=-1;
-                            obj2.draw();
-                            c.fillStyle='black'
-                        }
-                    }
-                }
-            }
-        }
-    }
-    // console.log(s)
-
-
-    setTimeout(loop, 1000/t);
-}
-let t = 60;
 
 
 
@@ -275,7 +351,10 @@ function TESTING(d) {
 //TESTING CLASSES
 let quadRoots = [];
 class Block {
+    static Id = 0;
     constructor(x, y, width, height) {
+        this.id = Block.Id;
+        Block.Id++;
         this.x = x;
         this.y = y;
         this.width = width;
@@ -312,3 +391,37 @@ class Block {
         // }
     }
 }
+
+let squares = [];
+function initalize() {
+    while(squares.length<200) {
+        let square = new Block(Math.random()*canvas.width, Math.random()*canvas.height, 5, 5)
+        // squares.push(square)
+        squares.push(square)
+        quadTree.insert(square);
+    
+    }
+    loop();
+}
+function loop() {
+    quadTree = new QuadSector(new Rect(0, 0, canvas.width, canvas.height),0);
+    quadRoots.length = 0;
+    quadRoots[0] = quadTree
+    // quadTree.getRoots(quadTree, quadRoots);
+    c.clearRect(0, 0, canvas.width, canvas.height);
+    for(let i = 0; i < squares.length; i++) {
+        squares[i].move();
+        squares[i].draw();
+        quadTree.insert(squares[i])
+    }
+
+    for(let i = 0; i < quadRoots.length; i++) {
+        quadRoots[i].draw();
+    }
+    // quadRoots.length = 0;
+    // quadTree.getRoots(quadTree, quadRoots);
+
+    window.requestAnimationFrame(loop);
+    // setTimeout(loop, 1000/t);
+}
+let t = 60;
