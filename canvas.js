@@ -1,8 +1,8 @@
 const canvas = document.getElementById('canvas');
 canvas.width = 200;
 canvas.height = 200;
-canvas.width = 640;
-canvas.height = 480;
+canvas.width = innerWidth;
+canvas.height = innerHeight;
 const c = canvas.getContext('2d');
 let quadSettings = {
     MaxDepth: 4,
@@ -10,7 +10,7 @@ let quadSettings = {
 }
 let testSettings = {
     MaxDepth: 3,
-    MaxObjects: 10
+    MaxObjects: 15
 }
 
 
@@ -18,11 +18,7 @@ setQuadSettings(quadSettings);
 setQuadSettings(testSettings);
 let quadTree = new QuadSector(new Rect(0, 0, canvas.width, canvas.height),0);
 
-loop();
-// initalize();
-while(squares.length<200) {
-    squares.push(new Block(Math.random()*canvas.width, Math.random()*canvas.height, 5, 5))
-}
+initalize();
 
 
 
@@ -49,6 +45,6 @@ canvas.addEventListener('mousedown', function(e) {
     squares.push(block);
     // quadTree.getRoots(quadTree, quadRoots);
     // quadTree.insert(block);
-    block.draw();
+    // block.draw();
 
 })
