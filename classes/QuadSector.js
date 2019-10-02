@@ -24,7 +24,7 @@ class QuadSector {
         this.BL = undefined;
         this.BR = undefined;
 
-        this.draw();
+        // this.draw();
     }
     fill() {
         c.fillStyle='red';
@@ -190,8 +190,8 @@ function collisionDetection(obj1, obj2) {
 
 let boundingBox = new Rect(0, 0, 0, 0);
 function initalize() {
-    while(squares.length<500) {
-        squares.push(new Block(Math.random()*canvas.width, Math.random()*canvas.height, 10, 10))
+    while(squares.length<400) {
+        squares.push(new Block(Math.random()*canvas.width, Math.random()*canvas.height, canvas.width/2/2/2/30, canvas.width/2/2/2/30))
         // squares.push(new Block(Math.random()*canvas.width, Math.random()*canvas.height, 10+~~(Math.random()*20), 10+~~(Math.random()*20)))
     }
     
@@ -206,6 +206,11 @@ function loop() {
 
     c.clearRect(0, 0, canvas.width, canvas.height);
     for(let i = 0; i < squares.length; i++) {
+        if(squares[i].isDead) {
+            squares.splice(i, 1);
+            squares.push(new Block(Math.random()*canvas.width, Math.random()*canvas.height, canvas.width/2/2/2/30, canvas.width/2/2/2/30))
+            continue;
+        }
         squares[i].move();
         squares[i].draw();
         quadTree.insert(squares[i]);
@@ -225,9 +230,11 @@ function loop() {
                 
                 if(collisionDetection(squares[i], a[j])) {
                     c.fillStyle = 'red';
+                    a[j].isDead = true;
+                    squares[i].isDead = true;
                     a[j].draw();
                     squares[i].draw();
-                }
+    }
 
 
             }

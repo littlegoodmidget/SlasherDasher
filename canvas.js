@@ -1,8 +1,8 @@
 const canvas = document.getElementById('canvas');
-canvas.width = 200;
-canvas.height = 200;
-canvas.width = innerWidth;
-canvas.height = innerHeight;
+canvas.width = 600;
+canvas.height = 600;
+// canvas.width = innerWidth;
+// canvas.height = innerHeight;
 const c = canvas.getContext('2d');
 let quadSettings = {
     MaxDepth: 4,
