@@ -84,11 +84,16 @@ Slasher.prototype.mutateStructure = function(){
 				// // Connect startNode to endNode (create synapse)
 				// startNode.addNode(endNode);
 
+				const randomNum = Math.random();
 				if(startNode.alreadyConnected(endNode)){
 					// already connected
 					// either create new node or remove synapse
 
-					
+					if(randomNum<0.5){
+						// create new node
+					}else{
+						// remove synapse
+					}
 				}else{
 					// not already connected
 					// either create new synapse new node or remove end node(if not output node)

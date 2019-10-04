@@ -15,11 +15,12 @@ function Node(isInput){
 
 }
 
-
+// Adds/connects two nodes together. Pruning step will resolve this issue
 Node.prototype.addNode = function(nextNode){
-	this.nextNodes.push(nextNode);
+	this.nextNodes.push(nextNode);	
+	nextNode.nextNodes.push(this);
+
 	nextNode.numOfParents++;
-	this.nextNodes.push(nextNode);
 	this.numOfParents++;
 }
 
