@@ -6,22 +6,30 @@ function Node(isInput){
 
 	this.nextNodes = [];	// only for non-output
 	this.weights = [];	// only for non-output. corresponding weight values
+	
+	this.numOfDependents = 0;	// Number of parents
 
 	if(!isInput){
 		this.bias = 0;	// only for non-input
-		this.numOfParents = 0;	// Number of parents
-		this.countedParents = 0;	// Number of parents that have currently been counted
+		this.countedDependents = 0;	// Number of parents that have currently been counted
 	}
 
 }
 
-// Adds/connects two nodes together. Pruning step will resolve this issue
-Node.prototype.addNode = function(nextNode){
+// Creates 2 connections between two nodes. Pruning step will reduce connections to one
+Node.prototype.createSynapse = function(nextNode){
 	this.nextNodes.push(nextNode);	
 	nextNode.nextNodes.push(this);
 
-	nextNode.numOfParents++;
-	this.numOfParents++;
+	nextNode.numOfDependents++;
+	this.numOfDependents++;
+}
+
+// Adds/connects 
+Node.prototype.addNode = function(beforeNode,afterNode){
+	beforeNode.nextNodes[beforeNode.nextNodes.indexOf(afterNode)]=this;
+	this.nextNodes.push(afterNode);
+	this.numOfDependents++;
 }
 
 // Returns true if current node as nextNode

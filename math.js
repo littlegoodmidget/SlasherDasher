@@ -6,6 +6,6 @@ const m = {
 	},
 
 	randomIndexFromList: function(list){
-		return list[Math.floor(Math.random()*list.length)];
+		return Math.floor(Math.random()*list.length);
 	}
 };

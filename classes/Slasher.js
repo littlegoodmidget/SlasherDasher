@@ -44,20 +44,21 @@ Slasher.prototype.createNN = function(numOfInputs,numOfOutputs){
 	}
 
 
-	// MUTATIONS
-	// Create AT LEAST ONE synapse
-	const startNode = m.randomIndexFromList(this.inputNodes);
-	let endNode = m.randomIndexFromList(this.outputNodes);
-	// Connect startNode to endNode (create synapse)
-	startNode.addNode(endNode);
+	// // MUTATIONS
+	// // Create AT LEAST ONE synapse
+	// const startNode = this.inputNodes[m.randomIndexFromList(this.inputNodes)];
+	// let endNode = this.outputNodes[m.randomIndexFromList(this.outputNodes)];
+	// // Connect startNode to endNode (create synapse)
+	// startNode.createSynapse(endNode);
 
-	// Create AT LEAST ONE bias
-	endNode = m.randomIndexFromList(this.outputNodes);
-	endNode.bias = m.random(1);
+	// // Create AT LEAST ONE bias
+	// endNode = m.randomIndexFromList(this.outputNodes);
+	// endNode.bias = m.random(1);
 }
 
 
 Slasher.prototype.mutateStructure = function(){
+	// Creates mutations in the structure of the neural network of the agent
 	/* 	Types of mutation:
 		add synapse
 		remove synapse
@@ -69,40 +70,73 @@ Slasher.prototype.mutateStructure = function(){
 
 
 	// Select which type of structure mutation (add/remove synapse&node or bias)
-	const synNodeMutation = Math.random()>0.666 ? 0 : 1; 	// 0=>bias mutation, 1=>synapse&node mutation
+	const synNodeMutation = 1// Math.random()>0.666 ? 0 : 1; 	// 0=>bias mutation, 1=>synapse&node mutation
 	console.log(synNodeMutation);
 
-	for(let i=0;i<Math.random()*3;i++){
-	// Select node 
+	for(let i=0;i<1;i++){
 
 		if(synNodeMutation){
 			// synapse/node Mutation
 
-				const startNode = m.randomIndexFromList(this.inputNodes)+m.randomIndexFromList(this.hiddenNodes);	//any non-output
-				const endNode = m.randomIndexFromList(this.hiddenNodes)+m.randomIndexFromList(this.outputNodes);	//any non-input
-				console.log(startNode,endNode)
-				// // Connect startNode to endNode (create synapse)
-				// startNode.addNode(endNode);
+			// Selecting start and end node to mutate
+			// Select start node
+			const startNodeIndex = m.randomIndexFromList(this.inputNodes)+m.randomIndexFromList(this.hiddenNodes);	//any non-output
+			let startNode;
+			if(startNodeIndex<this.inputNodes.length)
+				startNode = this.inputNodes[startNodeIndex];
+			else
+				startNode = this.hiddenNodes[startNodeIndex];
+			
+			console.log('startNodeIndex',startNodeIndex)
+			
+			// Select end node
+			const endNodeIndex = m.randomIndexFromList(this.hiddenNodes)+m.randomIndexFromList(this.outputNodes);	//any non-input
+			let endNodeIsOutput = 0;
+			let endNode;
+			if(endNodeIndex<this.hiddenNodes.length)
+				endNode = this.hiddenNodes[endNodeIndex];
+			else{
+				endNode = this.outputNodes[endNodeIndex];
+				endNodeIsOutput = 1;
+			}
+			console.log(startNodeIndex,endNodeIndex,startNode,endNode)
+			// // Connect startNode to endNode (create synapse)
+			// startNode.createSynapse(endNode);
+			console.log('startNode.alreadyConnected(endNode)',startNode.alreadyConnected(endNode))
+			
+			if(startNode.alreadyConnected(endNode)){
+				// already connected.
+				// Now either create new node or remove synapse
 
-				const randomNum = Math.random();
-				if(startNode.alreadyConnected(endNode)){
-					// already connected
-					// either create new node or remove synapse
-
-					if(randomNum<0.5){
-						// create new node
-					}else{
-						// remove synapse
-					}
+				if(Math.random()<0.5){
+					// create new node
+					const newNode = new Node(0);
+					this.hiddenNodes.push(newNode);
+					newNode.addNode(startNode,endNode);
 				}else{
-					// not already connected
-					// either create new synapse new node or remove end node(if not output node)
-
-
+					// remove synapse
+					endNode.numOfDependents--;
+					startNode.nextNodes.splice(startNode.nextNodes.indexOf(endNode),1);
 				}
-				// find if connection already exists
-				// if connection already exists => remove syn or add node
-				// if not exists => add syn or remove last node(if not output)
+			}else{
+				// not already connected.
+				// either create new synapse or remove end node(if not output node)
+
+				if(Math.random()<0.5){
+					// Add synapse
+					// 
+					startNode.createSynapse(endNode);
+				}else{
+					// Remove end node
+					// (remove startNode)
+					
+				}
+
+
+			}
+			// find if connection already exists
+			// if connection already exists => remove syn or add node
+			// if not exists => add syn or remove last node(if not output)
 
 		
 
